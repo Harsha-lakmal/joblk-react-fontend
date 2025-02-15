@@ -1,0 +1,217 @@
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Chip from '@mui/material/Chip';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import { createTheme } from '@mui/material/styles';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import SearchIcon from '@mui/icons-material/Search';
+import { AppProvider } from '@toolpad/core/AppProvider';
+import { DashboardLayout, ThemeSwitcher } from '@toolpad/core/DashboardLayout';
+import { useDemoRouter } from '@toolpad/core/internal';
+import InputAdornment from '@mui/material/InputAdornment';
+import { AccountPreview } from '@toolpad/core/Account';
+import { HomeIcon, UserIcon, BriefcaseIcon, SettingsIcon } from 'lucide-react';
+import Img from '../DrowePageTest/lkJob.png';
+import JobPage from '../JobPage/JobPage';
+import AboutPage from '../AboutPage/AboutPage';
+import SettingPage from '../SettingPage/SettingPage';
+import HomePage from '../HomePage/HomePage';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom'
+
+
+// Navigation array for sidebar items
+const NAVIGATION = [
+  {
+    kind: 'header',
+    title: 'Main items',
+  },
+  {
+    segment: 'home',
+    title: 'Home',
+    icon: <HomeIcon />,
+  },
+  {
+    segment: 'about',
+    title: 'About',
+    icon: <UserIcon />,
+  },
+  {
+    segment: 'job',
+    title: 'Job',
+    icon: <BriefcaseIcon />,
+  },
+  {
+    segment: 'setting',
+    title: 'Setting',
+    icon: <SettingsIcon />,
+  },
+];
+
+// Demo theme setup for the layout
+const demoTheme = createTheme({
+  cssVariables: {
+    colorSchemeSelector: 'data-toolpad-color-scheme',
+  },
+  colorSchemes: { light: true, dark: true },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
+});
+
+// Toolbar actions with search functionality
+function ToolbarActionsSearch() {
+  return (
+    <Stack direction="row">
+      <Tooltip title="Search" enterDelay={1000}>
+        <div>
+          <IconButton
+            type="button"
+            aria-label="search"
+            sx={{
+              display: { xs: 'inline', md: 'none' },
+            }}
+          >
+            <SearchIcon />
+          </IconButton>
+        </div>
+      </Tooltip>
+      <TextField
+        label="Search"
+        variant="outlined"
+        size="small"
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton type="button" aria-label="search" size="small">
+                <SearchIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        sx={{ display: { xs: 'none', md: 'inline-block' }, mr: 1 }}
+      />
+      <ThemeSwitcher />
+    </Stack>
+  );
+}
+
+// Sidebar footer displaying time or mini version of title
+function SidebarFooter({ mini }) {
+  const [currentTime, setCurrentTime] = React.useState(new Date().toLocaleString());
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date().toLocaleString());
+    }, 1000); // Update time every second
+
+    return () => clearInterval(intervalId); // Clean up the interval on component unmount
+  }, []);
+
+  return (
+    <Typography
+      variant="caption"
+      sx={{ m: 1, whiteSpace: 'nowrap', overflow: 'hidden' }}
+    >
+      {mini ? 'JobLK' : currentTime} {/* Display time when sidebar is expanded */}
+    </Typography>
+  );
+}
+
+SidebarFooter.propTypes = {
+  mini: PropTypes.bool.isRequired,
+};
+
+// Custom app title with branding
+function CustomAppTitle() {
+  return (
+    <Stack direction="row" alignItems="center" spacing={2}>
+      <img src={Img} width={'40px'} height={'40px'} style={{ borderRadius: '20px' }} />
+      <Typography variant="h6">JobLK</Typography>
+      <Chip size="small" label="Sri Lanka" color="info" />
+      <Tooltip title="Connected to production">
+        <CheckCircleIcon color="success" fontSize="small" />
+      </Tooltip>
+    </Stack>
+  );
+}
+
+// Mock session data
+const demoSession = {
+  user: {
+    name: 'Bharat Kashyap',
+    email: 'bharatkashyap@outlook.com',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRT2A65aX514SAgEflSY728Lgr8cBpBGLJS2g&s',
+  },
+};
+
+// Main layout component with dashboard slots
+function DashboardLayoutSlots(props) {
+  const { window } = props;
+  const router = useDemoRouter('/dashboard');
+  const navigate = useNavigate(); // Get the navigate function from react-router-dom
+
+  const demoWindow = window !== undefined ? window() : undefined;
+
+  const [session, setSession] = React.useState(demoSession);
+  const authentication = React.useMemo(() => {
+    return {
+      signIn: () => {
+        setSession(demoSession);
+      },
+      signOut: () => {
+        setSession(null);
+      },
+    };
+  }, []);
+
+  // Update the navigation handling
+  const handleNavigation = (segment) => {
+    // Navigate to the respective route based on the segment
+    navigate(`/dashboard/${segment}`);
+  };
+
+  return (
+    <AppProvider
+      navigation={NAVIGATION}
+      router={router}
+      theme={demoTheme}
+      window={demoWindow}
+      authentication={authentication}
+      session={session}
+    >
+      <DashboardLayout
+        slots={{
+          appTitle: CustomAppTitle,
+          toolbarActions: ToolbarActionsSearch,
+          sidebarFooter: SidebarFooter,
+        }}
+        onNavigationItemClick={(item) => handleNavigation(item.segment)} // Use handleNavigation here
+      >
+        <Routes>
+          <Route path="dashboard/home" element={<HomePage />} />
+          <Route path="dashboard/about" element={<AboutPage />} />
+          <Route path="dashboard/job" element={<JobPage />} />
+          <Route path="dashboard/setting" element={<SettingPage />} />
+        </Routes>
+      </DashboardLayout>
+    </AppProvider>
+  );
+}
+
+DashboardLayoutSlots.propTypes = {
+  window: PropTypes.func,
+};
+
+export default DashboardLayoutSlots;
