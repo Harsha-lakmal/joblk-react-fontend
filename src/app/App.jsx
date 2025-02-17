@@ -1,26 +1,11 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import DrowePageTest from '../page/DrowePageTest/DrowePageTest';
-import Drow from '../page/Drow/Drow'
+import { Route, Routes, Navigate } from 'react-router-dom';
+import DrowePage from '../page/DrowerPage/DrowerPage';
 
 function App() {
   return (
-    <>
-      <div>
-        {/* <DrowerPage/> */}
-        {/* <Drow/> */}
-        {/* <Router>
-          <Routes>
-            <Route path="/dashboard/*" element={<DrowePageTest />} />
-          </Routes>
-        </Router> */}
-
-              {/* <DrowePageTest/> */}
-
-              <Drow/>
-
-              
-      </div>
-    </>
+    <div>
+     <DrowePage/>
+    </div>
   );
 }
 
