@@ -8,20 +8,21 @@ import HomePage from '../page/HomePage/HomePage';
 import AboutPage from '../page/AboutPage/AboutPage';
 import JobPage from '../page/JobPage/JobPage';
 import SettingPage from '../page/SettingPage/SettingPage';
+import DashBoard from '../comon/DashBoard/DashBoard';
+import  AboutOther from '../OtherPage/about/page'
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/login" />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/sign" element={<SignPage />} />
-      <Route path="/dashboard" element={ <DrowePageTest/>} />
-      <Route path="/dashboard/home" element={<HomePage />} />
-      <Route path="/dashboard/about" element={<AboutPage />} />
-      <Route path="/dashboard/job" element={<JobPage />} />
-      <Route path="/dashboard/setting" element={<SettingPage />} />
+    // <Routes>
+    //   <Route path="/" element={<Navigate to="/login" />} />
+    //   <Route path="/login" element={<LoginPage />} />
+    //   <Route path="/sign" element={<SignPage />} />
+    //   <Route path="/dashboard" element={ <DrowePageTest/>} />
+    // </Routes>
+    <div>
+        <AboutOther/>
+    </div>
 
-    </Routes>
-   
+  
   );
 }
 
